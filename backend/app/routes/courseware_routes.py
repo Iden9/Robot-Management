@@ -14,7 +14,7 @@ import mimetypes
 courseware_bp = Blueprint('courseware', __name__)
 
 # 文件上传配置
-UPLOAD_FOLDER = '/Users/daixun/Desktop/recentProject/6.27/backend/uploads/courseware'
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'uploads', 'courseware')
 ALLOWED_EXTENSIONS = ['.pdf', '.ppt', '.pptx', '.doc', '.docx', '.mp4', '.mp3', '.jpg', '.png', '.jpeg', '.gif', '.zip', '.rar']
 MAX_FILE_SIZE = 100 * 1024 * 1024  # 100MB
 
