@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # MySQL数据库服务
+  mysql:
+    image: mysql:8.0
+    container_name: yushu_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: g1_edu
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./g1_edu.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - yushu_network
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Python后端服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: yushu_backend
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=123456
+      - MYSQL_DATABASE=g1_edu
+    depends_on:
+      - mysql
+    volumes:
+      - ./backend:/app
+    networks:
+      - yushu_network
+    command: python run.py
+
+  # Node.js前端服务
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: yushu_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - backend
+    volumes:
+      - ./front:/app
+      - /app/node_modules
+    networks:
+      - yushu_network
+    command: npm run dev -- --host 0.0.0.0 --port 3000
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  yushu_network:
+    driver: bridge
