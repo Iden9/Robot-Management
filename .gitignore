@@ -32,34 +32,11 @@ out/
 .nuxt/
 *.tsbuildinfo
 
-# Python (后端)
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
 venv/
-env/
-ENV/
-.env
 .venv
-pip-log.txt
-pip-delete-this-directory.txt
-*.egg-info/
-.installed.cfg
-*.egg
 
-# 测试和覆盖率
-coverage/
-.coverage
-htmlcov/
-.tox/
-.nox/
-.pytest_cache/
-.coverage.*
-nosetests.xml
-coverage.xml
-*.cover
+
 
 # 数据库
 *.sqlite
@@ -70,44 +47,12 @@ coverage.xml
 logs/
 *.log
 
-# 本地配置文件
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.*
-
 # 缓存
-.cache/
 .parcel-cache/
-.eslintcache
-.stylelintcache
 
 # 上传文件
-uploads/
 backend/uploads/
-*.pdf
-*.jpg
-*.jpeg
-*.png
-*.gif
-*.bmp
-*.svg
-*.xlsx
-*.xls
-*.docx
-*.doc
-*.pptx
-*.ppt
-*.mp4
-*.avi
-*.mov
-*.wmv
-*.flv
 
 # 杂项
 .DS_Store
-.tmp/
-temp/ 
-*.md 
 .claude
