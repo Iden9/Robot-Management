@@ -1,0 +1,14 @@
+# 数据库同步工具依赖包
+# 安装命令：pip install -r requirements.txt
+
+# MySQL数据库连接器
+PyMySQL>=1.0.2
+
+# 可选：进度条显示（如果需要可视化进度）
+# tqdm>=4.64.0
+
+# 可选：更好的配置文件处理
+# pyyaml>=6.0
+
+# 可选：加密密码存储
+# cryptography>=3.4.8
