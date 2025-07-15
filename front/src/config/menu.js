@@ -10,8 +10,6 @@ export const MENU_CONFIG = [
     path: '/dashboard',
     icon: 'dashboard',
     // 需要系统看板查看权限
-    requiredPermissions: ['dashboard:view'],
-    // 兼容旧的角色系统
     roles: ['admin', 'operator']
   },
   {
@@ -20,7 +18,6 @@ export const MENU_CONFIG = [
     path: '/education',
     icon: 'education',
     // 需要教育内容查看权限
-    requiredPermissions: ['education:view'],
     roles: ['admin', 'operator', 'viewer']
   },
   {
@@ -29,7 +26,6 @@ export const MENU_CONFIG = [
     path: '/navigation',
     icon: 'navigation',
     // 需要导航查看权限
-    requiredPermissions: ['navigation:list'],
     roles: ['admin', 'operator', 'viewer']
   },
   {
@@ -38,7 +34,6 @@ export const MENU_CONFIG = [
     path: '/robot-control',
     icon: 'robot',
     // 需要设备控制权限
-    requiredPermissions: ['equipment:control'],
     roles: ['admin', 'operator', 'viewer']
   },
   {
@@ -47,7 +42,6 @@ export const MENU_CONFIG = [
     path: '/equipment',
     icon: 'equipment',
     // 需要设备查看权限
-    requiredPermissions: ['equipment:list'],
     roles: ['admin', 'operator']
   },
   {
@@ -56,7 +50,6 @@ export const MENU_CONFIG = [
     path: '/account',
     icon: 'account',
     // 需要用户管理权限
-    requiredPermissions: ['user:list'],
     roles: ['admin']
   },
   {
@@ -65,8 +58,23 @@ export const MENU_CONFIG = [
     path: '/roles',
     icon: 'roles',
     // 需要角色管理权限
-    requiredPermissions: ['role:list'],
     roles: ['admin']
+  },
+  {
+    name: 'knowledge',
+    title: '知识库',
+    path: '/knowledge',
+    icon: 'knowledge',
+    // 需要知识库查看权限
+    roles: ['admin', 'operator', 'viewer']
+  },
+  {
+    name: 'prompt',
+    title: '提示词',
+    path: '/prompt',
+    icon: 'prompt',
+    // 需要提示词查看权限
+    roles: ['admin', 'operator', 'viewer']
   },
   {
     name: 'system',
@@ -74,7 +82,6 @@ export const MENU_CONFIG = [
     path: '/system',
     icon: 'settings',
     // 需要系统设置权限
-    requiredPermissions: ['system:settings'],
     roles: ['admin']
   }
 ]
@@ -131,6 +138,21 @@ export const MENU_ICONS = {
   settings: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <circle cx="12" cy="12" r="3" />
     <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  </svg>`,
+  
+  knowledge: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    <circle cx="10" cy="8" r="2" />
+    <path d="M14 10h4" />
+    <path d="M10 14h6" />
+    <path d="M10 18h4" />
+  </svg>`,
+  
+  prompt: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    <path d="M9 9h6" />
+    <path d="M9 13h6" />
   </svg>`,
   
   logout: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

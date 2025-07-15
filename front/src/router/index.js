@@ -111,6 +111,26 @@ const router = createRouter({
       }
     },
     {
+      path: '/knowledge',
+      name: 'KnowledgeManagement',
+      component: () => import('../views/KnowledgeManagement/index.vue'),
+      meta: {
+        requiresAuth: true,
+        title: '知识库管理',
+        roles: ['admin', 'operator', 'viewer']
+      }
+    },
+    {
+      path: '/prompt',
+      name: 'PromptManagement',
+      component: () => import('../views/PromptManagement/index.vue'),
+      meta: {
+        requiresAuth: true,
+        title: '提示词管理',
+        roles: ['admin', 'operator', 'viewer']
+      }
+    },
+    {
       path: '/403',
       name: 'Forbidden',
       component: () => import('../views/Error/403.vue'),
