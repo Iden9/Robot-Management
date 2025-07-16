@@ -12,6 +12,8 @@ from app.models.navigation_point import NavigationPoint
 from app.models.dashboard_statistics import DashboardStatistics
 from app.models.operation_log import OperationLog
 from app.models.system_settings import SystemSettings
+from app.models.knowledge_base import KnowledgeBase
+from app.models.prompt_template import PromptTemplate
 
 __all__ = [
     'User',
@@ -27,5 +29,7 @@ __all__ = [
     'NavigationPoint',
     'DashboardStatistics',
     'OperationLog',
-    'SystemSettings'
+    'SystemSettings',
+    'KnowledgeBase',
+    'PromptTemplate'
 ]

@@ -16,6 +16,8 @@ from .log_routes import log_bp
 from .role_routes import role_bp
 from .permission_routes import permission_bp
 from .menu_routes import menu_bp
+from .knowledge_routes import knowledge_bp
+from .prompt_routes import prompt_bp
 
 # 注册所有蓝图
 api_bp.register_blueprint(auth_bp, url_prefix='/auth')
@@ -30,5 +32,7 @@ api_bp.register_blueprint(log_bp, url_prefix='/logs')
 api_bp.register_blueprint(role_bp, url_prefix='/roles')
 api_bp.register_blueprint(permission_bp, url_prefix='/permissions')
 api_bp.register_blueprint(menu_bp, url_prefix='/menus')
+api_bp.register_blueprint(knowledge_bp, url_prefix='/knowledge')
+api_bp.register_blueprint(prompt_bp, url_prefix='/prompt')
 
 __all__ = ['api_bp']
