@@ -12,213 +12,213 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: front/package-lock.json
-        
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-        
-    - name: Install frontend dependencies
-      working-directory: ./front
-      run: |
-        npm ci
-        
-    - name: Build frontend
-      working-directory: ./front
-      run: |
-        npm run build
-        
-    - name: Install backend dependencies
-      working-directory: ./backend
-      run: |
-        pip install -r requirements.txt
-        
-    - name: Create deployment package
-      run: |
-        mkdir -p deploy
-        # 复制后端文件
-        cp -r backend deploy/
-        # 复制前端构建文件
-        cp -r front/dist deploy/frontend
-        # 复制数据库文件
-        cp -r mysql deploy/
-        # 复制配置文件
-        cp docker-compose.yml deploy/
-        cp database_schema.sql deploy/ 2>/dev/null || true
-        # 创建部署脚本
-        cat > deploy/deploy.sh << 'EOF'
-        #!/bin/bash
-        set -e
-        
-        echo "开始部署宇树G1 EDU机器人管理系统..."
-        
-        # 设置变量
-        APP_DIR="/opt/g1-edu-system"
-        NGINX_CONF="/etc/nginx/sites-available/g1-edu-system"
-        NGINX_ENABLED="/etc/nginx/sites-enabled/g1-edu-system"
-        SERVICE_FILE="/etc/systemd/system/g1-edu-system.service"
-        
-        # 创建应用目录
-        sudo mkdir -p $APP_DIR
-        
-        # 停止现有服务
-        sudo systemctl stop g1-edu-system || true
-        
-        # 备份现有文件
-        if [ -d "$APP_DIR/backend" ]; then
-            sudo cp -r $APP_DIR $APP_DIR.backup.$(date +%Y%m%d_%H%M%S)
-        fi
-        
-        # 复制新文件
-        sudo cp -r backend $APP_DIR/
-        sudo cp -r frontend $APP_DIR/
-        sudo cp -r mysql $APP_DIR/
-        
-        # 设置权限
-        sudo chown -R $USER:$USER $APP_DIR
-        sudo chmod +x $APP_DIR/backend/run.py
-        
-        # 安装Python依赖
-        cd $APP_DIR/backend
-        pip3 install -r requirements.txt --user
-        
-        # 创建systemd服务文件
-        sudo tee $SERVICE_FILE > /dev/null << 'SYSTEMD_EOF'
-        [Unit]
-        Description=G1 EDU Robot Management System
-        After=network.target
-        
-        [Service]
-        Type=simple
-        User=$USER
-        WorkingDirectory=/opt/g1-edu-system/backend
-        Environment=PATH=/home/$USER/.local/bin:/usr/local/bin:/usr/bin:/bin
-        Environment=FLASK_APP=run.py
-        Environment=FLASK_ENV=production
-        ExecStart=/usr/bin/python3 run.py
-        Restart=always
-        RestartSec=3
-        
-        [Install]
-        WantedBy=multi-user.target
-        SYSTEMD_EOF
-        
-        # 创建Nginx配置
-        sudo tee $NGINX_CONF > /dev/null << 'NGINX_EOF'
-        server {
-            listen 80;
-            server_name 8.153.175.16;
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: front/package-lock.json
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install frontend dependencies
+        working-directory: ./front
+        run: |
+          npm i
+
+      - name: Build frontend
+        working-directory: ./front
+        run: |
+          npm run build
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: |
+          pip install -r requirements.txt
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy
+          # 复制后端文件
+          cp -r backend deploy/
+          # 复制前端构建文件
+          cp -r front/dist deploy/frontend
+          # 复制数据库文件
+          cp -r mysql deploy/
+          # 复制配置文件
+          cp docker-compose.yml deploy/
+          cp database_schema.sql deploy/ 2>/dev/null || true
+          # 创建部署脚本
+          cat > deploy/deploy.sh << 'EOF'
+          #!/bin/bash
+          set -e
+          
+          echo "开始部署宇树G1 EDU机器人管理系统..."
+          
+          # 设置变量
+          APP_DIR="/opt/g1-edu-system"
+          NGINX_CONF="/etc/nginx/sites-available/g1-edu-system"
+          NGINX_ENABLED="/etc/nginx/sites-enabled/g1-edu-system"
+          SERVICE_FILE="/etc/systemd/system/g1-edu-system.service"
+          
+          # 创建应用目录
+          sudo mkdir -p $APP_DIR
+          
+          # 停止现有服务
+          sudo systemctl stop g1-edu-system || true
+          
+          # 备份现有文件
+          if [ -d "$APP_DIR/backend" ]; then
+              sudo cp -r $APP_DIR $APP_DIR.backup.$(date +%Y%m%d_%H%M%S)
+          fi
+          
+          # 复制新文件
+          sudo cp -r backend $APP_DIR/
+          sudo cp -r frontend $APP_DIR/
+          sudo cp -r mysql $APP_DIR/
+          
+          # 设置权限
+          sudo chown -R $USER:$USER $APP_DIR
+          sudo chmod +x $APP_DIR/backend/run.py
+          
+          # 安装Python依赖
+          cd $APP_DIR/backend
+          pip3 install -r requirements.txt --user
+          
+          # 创建systemd服务文件
+          sudo tee $SERVICE_FILE > /dev/null << 'SYSTEMD_EOF'
+          [Unit]
+          Description=G1 EDU Robot Management System
+          After=network.target
+          
+          [Service]
+          Type=simple
+          User=$USER
+          WorkingDirectory=/opt/g1-edu-system/backend
+          Environment=PATH=/home/$USER/.local/bin:/usr/local/bin:/usr/bin:/bin
+          Environment=FLASK_APP=run.py
+          Environment=FLASK_ENV=production
+          ExecStart=/usr/bin/python3 run.py
+          Restart=always
+          RestartSec=3
+          
+          [Install]
+          WantedBy=multi-user.target
+          SYSTEMD_EOF
+          
+          # 创建Nginx配置
+          sudo tee $NGINX_CONF > /dev/null << 'NGINX_EOF'
+          server {
+              listen 80;
+              server_name 8.153.175.16;
+          
+              # 前端静态文件
+              location / {
+                  root /opt/g1-edu-system/frontend;
+                  try_files $uri $uri/ /index.html;
+                  index index.html;
+              }
+          
+              # API代理到后端
+              location /api/ {
+                  proxy_pass http://127.0.0.1:5000;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+                  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                  proxy_set_header X-Forwarded-Proto $scheme;
+                  proxy_connect_timeout 60s;
+                  proxy_send_timeout 60s;
+                  proxy_read_timeout 60s;
+              }
+          
+              # 静态资源缓存
+              location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+                  root /opt/g1-edu-system/frontend;
+                  expires 1y;
+                  add_header Cache-Control "public, immutable";
+              }
+          }
+          NGINX_EOF
+          
+          # 启用Nginx站点
+          sudo ln -sf $NGINX_CONF $NGINX_ENABLED
+          
+          # 测试Nginx配置
+          sudo nginx -t
+          
+          # 重新加载systemd和启动服务
+          sudo systemctl daemon-reload
+          sudo systemctl enable g1-edu-system
+          sudo systemctl start g1-edu-system
+          
+          # 重启Nginx
+          sudo systemctl reload nginx
+          
+          # 检查服务状态
+          echo "检查服务状态..."
+          sudo systemctl status g1-edu-system --no-pager
+          
+          echo "部署完成！"
+          echo "前端访问地址: http://8.153.175.16"
+          echo "后端API地址: http://8.153.175.16/api"
+          
+          # 显示日志
+          echo "最近的应用日志:"
+          sudo journalctl -u g1-edu-system --no-pager -n 10
+          EOF
+          
+          chmod +x deploy/deploy.sh
+
+      - name: Create archive
+        run: |
+          tar -czf g1-edu-system-deploy.tar.gz -C deploy .
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            # 创建临时目录
+            mkdir -p ~/g1-deploy-temp
+            cd ~/g1-deploy-temp
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          source: "g1-edu-system-deploy.tar.gz"
+          target: "~/g1-deploy-temp/"
+
+      - name: Execute deployment
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            cd ~/g1-deploy-temp
             
-            # 前端静态文件
-            location / {
-                root /opt/g1-edu-system/frontend;
-                try_files $uri $uri/ /index.html;
-                index index.html;
-            }
+            # 解压文件
+            tar -xzf g1-edu-system-deploy.tar.gz
             
-            # API代理到后端
-            location /api/ {
-                proxy_pass http://127.0.0.1:5000;
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_set_header X-Forwarded-Proto $scheme;
-                proxy_connect_timeout 60s;
-                proxy_send_timeout 60s;
-                proxy_read_timeout 60s;
-            }
+            # 执行部署脚本
+            bash deploy.sh
             
-            # 静态资源缓存
-            location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
-                root /opt/g1-edu-system/frontend;
-                expires 1y;
-                add_header Cache-Control "public, immutable";
-            }
-        }
-        NGINX_EOF
-        
-        # 启用Nginx站点
-        sudo ln -sf $NGINX_CONF $NGINX_ENABLED
-        
-        # 测试Nginx配置
-        sudo nginx -t
-        
-        # 重新加载systemd和启动服务
-        sudo systemctl daemon-reload
-        sudo systemctl enable g1-edu-system
-        sudo systemctl start g1-edu-system
-        
-        # 重启Nginx
-        sudo systemctl reload nginx
-        
-        # 检查服务状态
-        echo "检查服务状态..."
-        sudo systemctl status g1-edu-system --no-pager
-        
-        echo "部署完成！"
-        echo "前端访问地址: http://8.153.175.16"
-        echo "后端API地址: http://8.153.175.16/api"
-        
-        # 显示日志
-        echo "最近的应用日志:"
-        sudo journalctl -u g1-edu-system --no-pager -n 10
-        EOF
-        
-        chmod +x deploy/deploy.sh
-        
-    - name: Create archive
-      run: |
-        tar -czf g1-edu-system-deploy.tar.gz -C deploy .
-        
-    - name: Deploy to server
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        port: ${{ secrets.SERVER_PORT || 22 }}
-        script: |
-          # 创建临时目录
-          mkdir -p ~/g1-deploy-temp
-          cd ~/g1-deploy-temp
-          
-    - name: Copy files to server
-      uses: appleboy/scp-action@v0.1.4
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        port: ${{ secrets.SERVER_PORT || 22 }}
-        source: "g1-edu-system-deploy.tar.gz"
-        target: "~/g1-deploy-temp/"
-        
-    - name: Execute deployment
-      uses: appleboy/ssh-action@v1.0.0
-      with:
-        host: ${{ secrets.SERVER_HOST }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SERVER_SSH_KEY }}
-        port: ${{ secrets.SERVER_PORT || 22 }}
-        script: |
-          cd ~/g1-deploy-temp
-          
-          # 解压文件
-          tar -xzf g1-edu-system-deploy.tar.gz
-          
-          # 执行部署脚本
-          bash deploy.sh
-          
-          # 清理临时文件
-          cd ~
-          rm -rf ~/g1-deploy-temp
-          
-          echo "部署完成！系统已启动在 http://8.153.175.16"
+            # 清理临时文件
+            cd ~
+            rm -rf ~/g1-deploy-temp
+            
+            echo "部署完成！系统已启动在 http://8.153.175.16"
