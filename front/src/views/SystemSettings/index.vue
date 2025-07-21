@@ -194,6 +194,9 @@ import LockIcon from '@/components/settings/icons/LockIcon.vue'
 import DatabaseIcon from '@/components/settings/icons/DatabaseIcon.vue'
 import SaveIcon from '@/components/settings/icons/SaveIcon.vue'
 
+// 导入alert工具函数
+import { success, error } from '@/utils/alert'
+
 // Stores
 import { useSystemStore } from '@/stores/system'
 
@@ -284,11 +287,14 @@ const saveServerSettings = async () => {
     const result = await systemStore.updateSystemConfigAction(configData)
     
     if (result.success) {
+      success(result.message || '服务器设置保存成功')
       console.log('服务器设置保存成功')
     } else {
+      error(result.message || '服务器设置保存失败')
       console.error('服务器设置保存失败:', result.message)
     }
   } catch (error) {
+    error('保存服务器设置失败: ' + (error.message || ''))
     console.error('保存服务器设置失败:', error)
   } finally {
     isSaving.value = false
@@ -317,12 +323,15 @@ const saveNotificationSettings = async () => {
     const result = await systemStore.updateSystemConfigAction(configData)
     
     if (result.success) {
+      success(result.message || '通知设置保存成功')
       console.log('通知设置保存成功')
     } else {
+      error(result.message || '通知设置保存失败')
       console.error('通知设置保存失败:', result.message)
     }
-  } catch (error) {
-    console.error('保存通知设置失败:', error)
+  } catch (err) {
+    error('保存通知设置失败: ' + (err.message || ''))
+    console.error('保存通知设置失败:', err)
   } finally {
     isSaving.value = false
   }
@@ -346,12 +355,15 @@ const saveSecuritySettings = async () => {
     const result = await systemStore.updateSystemConfigAction(configData)
     
     if (result.success) {
+      success(result.message || '安全设置保存成功')
       console.log('安全设置保存成功')
     } else {
+      error(result.message || '安全设置保存失败')
       console.error('安全设置保存失败:', result.message)
     }
-  } catch (error) {
-    console.error('保存安全设置失败:', error)
+  } catch (err) {
+    error('保存安全设置失败: ' + (err.message || ''))
+    console.error('保存安全设置失败:', err)
   } finally {
     isSaving.value = false
   }
@@ -375,12 +387,15 @@ const saveDataSettings = async () => {
     const result = await systemStore.updateSystemConfigAction(configData)
     
     if (result.success) {
+      success(result.message || '数据设置保存成功')
       console.log('数据设置保存成功')
     } else {
+      error(result.message || '数据设置保存失败')
       console.error('数据设置保存失败:', result.message)
     }
-  } catch (error) {
-    console.error('保存数据设置失败:', error)
+  } catch (err) {
+    error('保存数据设置失败: ' + (err.message || ''))
+    console.error('保存数据设置失败:', err)
   } finally {
     isSaving.value = false
   }
@@ -401,12 +416,15 @@ const backupNow = async () => {
     const result = await systemStore.createSystemBackupAction(backupData)
     
     if (result.success) {
+      success(result.message || '立即备份启动成功')
       console.log('立即备份启动成功:', result.data)
     } else {
+      error(result.message || '立即备份失败')
       console.error('立即备份失败:', result.message)
     }
-  } catch (error) {
-    console.error('立即备份失败:', error)
+  } catch (err) {
+    error('立即备份失败: ' + (err.message || ''))
+    console.error('立即备份失败:', err)
   }
 }
 
