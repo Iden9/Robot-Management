@@ -50,7 +50,7 @@
     <MonitoringPanel />
     
     <!-- 快捷操作栏 -->
-    <ActionTab title="快捷操作">
+    <!-- <ActionTab title="快捷操作">
       <ActionButton 
         text="添加新设备"
         :icon="PlusIcon"
@@ -69,7 +69,7 @@
         :loading="isLoading"
         @click="handleExportData"
       />
-    </ActionTab>
+    </ActionTab> -->
     
     <!-- 设备表单弹窗 -->
     <div class="modal" v-if="showForm">
@@ -151,11 +151,11 @@ const getUserStatus = () => {
 }
 
 // 按钮的点击处理函数
-const handleAddDevice = () => {
+/* const handleAddDevice = () => {
   formTitle.value = '添加设备'
   currentEquipment.value = null
   showForm.value = true
-}
+} */
 
 const handleSubmitEquipment = async (equipment) => {
   try {
@@ -191,7 +191,7 @@ const handleCancelForm = () => {
   showForm.value = false
 }
 
-const handleBatchDeploy = async () => {
+/* const handleBatchDeploy = async () => {
   try {
     isLoading.value = true
     console.log('批量部署')
@@ -225,9 +225,9 @@ const handleBatchDeploy = async () => {
   } finally {
     isLoading.value = false
   }
-}
+} */
 
-const handleExportData = async () => {
+/* const handleExportData = async () => {
   try {
     isLoading.value = true
     console.log('导出数据')
@@ -266,7 +266,7 @@ const handleExportData = async () => {
     isLoading.value = false
   }
 }
-
+ */
 // 刷新数据
 const refreshData = async () => {
   try {
