@@ -18,9 +18,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: front/package-lock.json
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: front/pnpm-lock.yaml
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+          run_install: false
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -30,12 +36,12 @@ jobs:
       - name: Install frontend dependencies
         working-directory: ./front
         run: |
-          npm i
+          pnpm install
 
       - name: Build frontend
         working-directory: ./front
         run: |
-          npm run build
+          pnpm build
 
       - name: Install backend dependencies
         working-directory: ./backend
