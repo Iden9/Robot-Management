@@ -16,47 +16,58 @@ system_bp = Blueprint('system', __name__)
 def get_system_config(current_user):
     """获取系统配置"""
     try:
-        # 这里可以从配置文件或数据库中获取系统配置
-        # 目前返回模拟的系统配置数据
-        config = {
-            "system_name": "G1 EDU机器人管理系统",
-            "version": "1.0.0",
-            "description": "智能教育机器人管理平台",
-            "max_concurrent_users": 100,
-            "session_timeout": 7200,  # 2小时
-            "password_policy": {
-                "min_length": 8,
-                "require_uppercase": True,
-                "require_lowercase": True,
-                "require_numbers": True,
-                "require_special_chars": False
-            },
-            "file_upload": {
-                "max_file_size": 100 * 1024 * 1024,  # 100MB
-                "allowed_extensions": [".pdf", ".ppt", ".pptx", ".doc", ".docx", ".mp4", ".mp3", ".jpg", ".png"],
-                "upload_path": "/uploads/"
-            },
-            "navigation": {
-                "default_speed": 1.0,
-                "max_participants_per_tour": 20,
-                "default_voice_volume": 80
-            },
-            "education": {
-                "default_session_duration": 45,  # 分钟
-                "max_students_per_class": 30,
-                "assessment_passing_score": 70
-            },
-            "backup": {
-                "auto_backup_enabled": True,
-                "backup_frequency": "daily",
-                "backup_retention_days": 30
-            },
-            "monitoring": {
-                "log_level": "INFO",
-                "enable_performance_monitoring": True,
-                "enable_error_tracking": True
+        # 从数据库获取系统配置
+        all_settings = SystemSettings.query.all()
+        
+        # 按分类组织配置数据
+        config = {}
+        for setting in all_settings:
+            category = setting.category
+            if category not in config:
+                config[category] = {}
+            config[category][setting.setting_key] = setting.get_value()
+        
+        # 如果数据库中没有配置，返回默认配置
+        if not config:
+            config = {
+                "system_name": "G1 EDU机器人管理系统",
+                "version": "1.0.0",
+                "description": "智能教育机器人管理平台",
+                "max_concurrent_users": 100,
+                "session_timeout": 7200,  # 2小时
+                "password_policy": {
+                    "min_length": 8,
+                    "require_uppercase": True,
+                    "require_lowercase": True,
+                    "require_numbers": True,
+                    "require_special_chars": False
+                },
+                "file_upload": {
+                    "max_file_size": 100 * 1024 * 1024,  # 100MB
+                    "allowed_extensions": [".pdf", ".ppt", ".pptx", ".doc", ".docx", ".mp4", ".mp3", ".jpg", ".png"],
+                    "upload_path": "/uploads/"
+                },
+                "navigation": {
+                    "default_speed": 1.0,
+                    "max_participants_per_tour": 20,
+                    "default_voice_volume": 80
+                },
+                "education": {
+                    "default_session_duration": 45,  # 分钟
+                    "max_students_per_class": 30,
+                    "assessment_passing_score": 70
+                },
+                "backup": {
+                    "auto_backup_enabled": True,
+                    "backup_frequency": "daily",
+                    "backup_retention_days": 30
+                },
+                "monitoring": {
+                    "log_level": "INFO",
+                    "enable_performance_monitoring": True,
+                    "enable_error_tracking": True
+                }
             }
-        }
         
         return jsonify(Result.success(
             message="获取系统配置成功",
@@ -76,22 +87,50 @@ def update_system_config(current_user):
         if not data:
             return jsonify(Result.error(message="请提供配置数据", code=400).to_dict())
         
-        # 这里应该将配置保存到配置文件或数据库
-        # 目前只是记录操作日志
+        # 保存配置到数据库
+        updated_settings = []
+        
+        # 遍历配置数据并保存到数据库
+        for category, settings in data.items():
+            if isinstance(settings, dict):
+                for key, value in settings.items():
+                    # 确定值类型
+                    value_type = 'string'
+                    if isinstance(value, bool):
+                        value_type = 'boolean'
+                    elif isinstance(value, int):
+                        value_type = 'integer'
+                    elif isinstance(value, float):
+                        value_type = 'float'
+                    elif isinstance(value, (dict, list)):
+                        value_type = 'json'
+                    
+                    # 保存设置
+                    setting = SystemSettings.set_value_by_key(
+                        category=category,
+                        setting_key=key,
+                        value=value,
+                        value_type=value_type,
+                        description=f"{category} - {key}",
+                        user_id=current_user.id
+                    )
+                    updated_settings.append(setting.to_dict())
         
         # 记录操作日志
         client_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
         OperationLog.create_log(
             user_id=current_user.id,
-            action_type='config',
             action="更新系统配置",
-            details=f"配置项数量: {len(data)}",
+            details=f"更新了 {len(updated_settings)} 个配置项",
             ip_address=client_ip
         )
         
         return jsonify(Result.success(
             message="系统配置更新成功",
-            data=data
+            data={
+                "updated_count": len(updated_settings),
+                "settings": updated_settings
+            }
         ).to_dict())
         
     except Exception as e:
@@ -186,9 +225,9 @@ def get_system_logs(current_user):
         if log_level:
             query = query.filter_by(level=log_level)
         
-        # 操作类型过滤
+        # 操作类型过滤 (使用action字段)
         if action_type:
-            query = query.filter_by(action_type=action_type)
+            query = query.filter_by(action=action_type)
         
         # 用户过滤
         if user_id:
@@ -255,7 +294,6 @@ def cleanup_system_logs(current_user):
         client_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
         OperationLog.create_log(
             user_id=current_user.id,
-            action_type='maintenance',
             action="清理系统日志",
             details=f"删除了 {deleted_count} 条日志记录",
             ip_address=client_ip
@@ -282,7 +320,6 @@ def optimize_database(current_user):
         client_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
         OperationLog.create_log(
             user_id=current_user.id,
-            action_type='maintenance',
             action="数据库优化",
             details="执行数据库优化操作",
             ip_address=client_ip
@@ -319,7 +356,6 @@ def create_system_backup(current_user):
         client_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
         OperationLog.create_log(
             user_id=current_user.id,
-            action_type='backup',
             action=f"创建系统备份: {backup_type}",
             details=f"备份ID: {backup_info['backup_id']}",
             ip_address=client_ip
@@ -429,7 +465,6 @@ def restart_system(current_user):
         client_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
         OperationLog.create_log(
             user_id=current_user.id,
-            action_type='system',
             action=f"系统重启: {restart_type}",
             details="系统重启请求已提交",
             ip_address=client_ip
@@ -525,7 +560,6 @@ def reset_system_settings(current_user):
         client_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
         OperationLog.create_log(
             user_id=current_user.id,
-            action_type='system',
             action=f"系统重置: {reset_type}",
             details=f"重置组件: {', '.join(reset_info['affected_components'])}",
             ip_address=client_ip

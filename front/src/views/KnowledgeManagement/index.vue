@@ -171,7 +171,7 @@ import {
   deleteKnowledge as deleteKnowledgeApi,
   getKnowledgeCategories 
 } from '@/api/knowledge'
-import { success as showSuccess, error as showError } from '@/utils/alert'
+import { success as showSuccess, error as showError, confirm } from '@/utils/alert'
 import { formatDate } from '@/utils/date'
 import KnowledgeModal from './components/KnowledgeModal.vue'
 import PlusIcon from '@/components/common/icons/PlusIcon.vue'
@@ -280,18 +280,28 @@ const editKnowledge = (knowledge) => {
 
 // 删除知识库
 const deleteKnowledge = async (knowledge) => {
-  if (!confirm(`确定要删除知识库"${knowledge.title}"吗？`)) {
-    return
-  }
-  
   try {
-    const response = await deleteKnowledgeApi(knowledge.id)
-    if (response.success) {
-      showSuccess('删除成功')
-      loadKnowledgeList()
+    // 使用confirm方法进行确认
+    const confirmed = await confirm(`确定要删除知识库"${knowledge.title}"吗？`, {
+      title: '确认删除'
+    });
+    
+    if (!confirmed) {
+      return;
+    }
+    
+    const response = await deleteKnowledgeApi(knowledge.id);
+    
+    // 根据response.code判断操作是否成功
+    if (response && response.code === 200) {
+      showSuccess(response.message || '删除成功');
+      loadKnowledgeList();
+    } else {
+      showError(response?.message || '删除失败');
     }
   } catch (error) {
-    showError('删除失败')
+    showError(error.message || '删除失败');
+    console.error('删除知识库失败:', error);
   }
 }
 
@@ -302,7 +312,16 @@ const closeModal = () => {
 }
 
 // 保存处理
-const handleSave = () => {
+const handleSave = (result) => {
+  console.log('父组件收到保存结果:', result);
+  
+  // 正确检查API响应结构
+  if (result && result.code === 200) {
+    showSuccess(result.message || '知识库保存成功')
+  } else if (result && result.success) {
+    // 兼容使用success字段的API
+    showSuccess(result.message || '知识库保存成功')
+  }
   loadKnowledgeList()
   closeModal()
 }

@@ -315,12 +315,13 @@ const handleSubmit = async () => {
       response = await createKnowledge(data)
     }
     
-    if (response.success) {
-      showSuccess(props.knowledge && props.isEdit ? '更新成功' : '创建成功')
-      emit('save')
-    }
+    console.log('API Response:', response)
+    
+    // API成功返回时，response就是包含code=200的对象
+    // 失败时会在catch块中处理
+    emit('save', response)
   } catch (error) {
-    showError(props.knowledge && props.isEdit ? '更新失败' : '创建失败')
+    showError(error.message || (props.knowledge && props.isEdit ? '更新失败' : '创建失败'))
   } finally {
     saving.value = false
   }

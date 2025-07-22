@@ -48,12 +48,12 @@
             :loading="isLoading"
             @click="handleStartTeaching"
           />
-          <ActionButton 
+          <!-- <ActionButton 
             text="高级设置" 
             type="secondary" 
             @click="handleAdvancedSettings"
-          />
-        </div>
+          /> -->
+        </div> 
       </SettingCard>
       
       <!-- AI语音设置卡片 -->
@@ -305,10 +305,9 @@ const handleStartTeaching = async () => {
 }
 
 // 高级设置
-const handleAdvancedSettings = () => {
-  // 打开高级设置对话框
+/* const handleAdvancedSettings = () => {
   console.log('打开高级设置')
-}
+} */
 
 // 测试语音
 const handleTestVoice = async () => {

@@ -3,13 +3,20 @@ import yaml
 
 def get_yaml_config():
     """
-    Load YAML config from config.yaml in the backend directory.
-    Returns a dict. If file or fields missing, returns empty dict or partial dict.
+    加载配置文件，本地开发优先加载dev.yaml，提交代码git排除了dev.yaml，如果没有则加载config.yaml
     """
+    # 本地开发优先加载dev.yaml
+    dev_config_path = 'dev.yaml'
+    if os.path.exists(dev_config_path):
+        with open(dev_config_path, 'r', encoding='utf-8') as f:
+            return yaml.safe_load(f) or {}
+    
+    # 提交代码git排除了dev.yaml，如果没有则加载config.yaml
     config_path = 'config.yaml'
     if os.path.exists(config_path):
         with open(config_path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f) or {}
+    
     return {}
 
 def get_by_path(d, path, default=None):
