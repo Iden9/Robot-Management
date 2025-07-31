@@ -14,11 +14,20 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./g1_edu.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/g1_edu.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./mysql/conf:/etc/mysql/conf.d
     networks:
       - yushu_network
-    command: --default-authentication-plugin=mysql_native_password
+    command: 
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Python后端服务
   backend:
@@ -30,21 +39,27 @@ services:
     ports:
       - "5001:5001"
     environment:
-      - FLASK_ENV=development
+      - FLASK_ENV=production
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=123456
+      - MYSQL_USER=app_user
+      - MYSQL_PASSWORD=app_password
       - MYSQL_DATABASE=g1_edu
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     volumes:
-      - ./backend:/app
+      - ./logs/backend:/app/logs
     networks:
       - yushu_network
-    command: python run.py
+    command: python main.py
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
-  # Node.js前端服务
+  # 前端服务 (Nginx)
   frontend:
     build:
       context: ./front
@@ -52,21 +67,17 @@ services:
     container_name: yushu_frontend
     restart: unless-stopped
     ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
+      - "80:80"
     depends_on:
-      - backend
-    volumes:
-      - ./front:/app
-      - /app/node_modules
+      backend:
+        condition: service_healthy
     networks:
       - yushu_network
-    command: npm run dev -- --host 0.0.0.0 --port 3000
-
-volumes:
-  mysql_data:
-    driver: local
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 networks:
   yushu_network:
