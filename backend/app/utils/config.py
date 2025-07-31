@@ -1,6 +1,7 @@
 import os
 import yaml
 
+
 def get_yaml_config():
     """
     加载配置文件，本地开发优先加载dev.yaml，提交代码git排除了dev.yaml，如果没有则加载config.yaml
@@ -10,14 +11,15 @@ def get_yaml_config():
     if os.path.exists(dev_config_path):
         with open(dev_config_path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f) or {}
-    
+
     # 提交代码git排除了dev.yaml，如果没有则加载config.yaml
     config_path = 'config.yaml'
     if os.path.exists(config_path):
         with open(config_path, 'r', encoding='utf-8') as f:
             return yaml.safe_load(f) or {}
-    
+
     return {}
+
 
 def get_by_path(d, path, default=None):
     """
@@ -30,6 +32,7 @@ def get_by_path(d, path, default=None):
         else:
             return default
     return d
+
 
 def get_config_value(path, default=None):
     """
