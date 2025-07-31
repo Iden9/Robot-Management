@@ -15,19 +15,14 @@ services:
       - "3306:3306"
     volumes:
       - ./mysql/data:/var/lib/mysql
-      - ./mysql/g1_edu.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./mysql/conf:/etc/mysql/conf.d
+      - ./mysql/g1_edu.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./mysql/conf:/etc/mysql/conf.d:ro
     networks:
       - yushu_network
     command: 
       - --default-authentication-plugin=mysql_native_password
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   # Python后端服务
   backend:
@@ -46,18 +41,13 @@ services:
       - MYSQL_PASSWORD=app_password
       - MYSQL_DATABASE=g1_edu
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     volumes:
       - ./logs/backend:/app/logs
     networks:
       - yushu_network
     command: python main.py
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    user: "unitree:unitree"
 
   # 前端服务 (Nginx)
   frontend:
@@ -69,15 +59,10 @@ services:
     ports:
       - "80:80"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     networks:
       - yushu_network
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+    user: "unitree:unitree"
 
 networks:
   yushu_network:

@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # 创建非root用户
-RUN groupadd -r appuser && useradd -r -g appuser appuser
+RUN groupadd -r unitree && useradd -r -g unitree -m unitree
 
 # 设置pip国内镜像源
 COPY pip.conf /etc/pip.conf
@@ -34,10 +34,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # 设置适当的权限
-RUN chown -R appuser:appuser /app
+RUN chown -R unitree:unitree /app
 
 # 切换到非root用户
-USER appuser
+USER unitree
 
 # 暴露端口
 EXPOSE 5001

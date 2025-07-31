@@ -10,7 +10,7 @@ class Config:
     # MySQL数据库配置
     MYSQL_USER = get_config_value('mysql.user', 'root')
     MYSQL_PASSWORD = get_config_value('mysql.password', '123456')
-    MYSQL_HOST = get_config_value('mysql.host', '8.153.175.16')
+    MYSQL_HOST = get_config_value('mysql.host', 'localhost')
     MYSQL_PORT = get_config_value('mysql.port', 3306)
     MYSQL_DATABASE = get_config_value('mysql.database', 'g1_edu')
     
