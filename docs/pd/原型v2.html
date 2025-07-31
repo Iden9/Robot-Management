@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宇树G1 EDU机器人管理系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        :root {
+            --primary: #0071e3;
+            --primary-dark: #0066cc;
+            --secondary: #86868b;
+            --light-bg: #f5f5f7;
+            --card-bg: #ffffff;
+            --text-dark: #1d1d1f;
+            --text-light: #6e6e73;
+            --success: #34c759;
+            --warning: #ff9500;
+            --danger: #ff3b30;
+            --border: #d2d2d7;
+            --education: #5e9cf2;
+            --tour: #ff9f0a;
+            --control: #5856d6;
+            --monitor: #af52de;
+            --role: #00c7be;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* 侧边导航栏 */
+        .sidebar {
+            width: 240px;
+            background: var(--card-bg);
+            border-right: 1px solid var(--border);
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s;
+        }
+        
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            font-size: 26px;
+        }
+        
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 0 10px;
+        }
+        
+        .nav-item {
+            padding: 12px 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: rgba(0, 113, 227, 0.1);
+            color: var(--primary);
+        }
+        
+        .nav-item i {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .header h2 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 10px 0;
+            width: 180px;
+            z-index: 100;
+            display: none;
+        }
+        
+        .user-dropdown-item {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .user-dropdown-item:hover {
+            background: rgba(0, 113, 227, 0.1);
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        /* 仪表盘卡片 */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: rgba(0, 113, 227, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .card-content {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .card-footer {
+            color: var(--text-light);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .card-footer i {
+            color: var(--success);
+        }
+        
+        /* 功能模块 */
+        .module-section {
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .module-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        
+        .module-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            transition: transform 0.3s;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .module-card-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .education-header {
+            background: rgba(94, 156, 242, 0.1);
+            border-bottom: 2px solid var(--education);
+        }
+        
+        .tour-header {
+            background: rgba(255, 159, 10, 0.1);
+            border-bottom: 2px solid var(--tour);
+        }
+        
+        .control-header {
+            background: rgba(88, 86, 214, 0.1);
+            border-bottom: 2px solid var(--control);
+        }
+        
+        .monitor-header {
+            background: rgba(175, 82, 222, 0.1);
+            border-bottom: 2px solid var(--monitor);
+        }
+        
+        .role-header {
+            background: rgba(0, 199, 190, 0.1);
+            border-bottom: 2px solid var(--role);
+        }
+        
+        .module-card-header i {
+            font-size: 28px;
+        }
+        
+        .education-header i {
+            color: var(--education);
+        }
+        
+        .tour-header i {
+            color: var(--tour);
+        }
+        
+        .control-header i {
+            color: var(--control);
+        }
+        
+        .monitor-header i {
+            color: var(--monitor);
+        }
+        
+        .role-header i {
+            color: var(--role);
+        }
+        
+        .module-card-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .module-card-body {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            background: var(--light-bg);
+            transition: all 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-education {
+            background: var(--education);
+            color: white;
+        }
+        
+        .btn-education:hover {
+            background: #4d8aef;
+        }
+        
+        .btn-tour {
+            background: var(--tour);
+            color: white;
+        }
+        
+        .btn-tour:hover {
+            background: #ff8c00;
+        }
+        
+        .btn-control {
+            background: var(--control);
+            color: white;
+        }
+        
+        .btn-control:hover {
+            background: #4a47b5;
+        }
+        
+        .btn-monitor {
+            background: var(--monitor);
+            color: white;
+        }
+        
+        .btn-role {
+            background: var(--role);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--light-bg);
+            color: var(--text-dark);
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--light-bg);
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(0, 113, 227, 0.05);
+        }
+        
+        .upload-area i {
+            font-size: 36px;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--success);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* 机器人控制面板 */
+        .robot-control-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        
+        .control-btn {
+            width: 100%;
+            height: 70px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--light-bg);
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 24px;
+        }
+        
+        .control-btn:hover {
+            background: rgba(0, 113, 227, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .forward-btn {
+            grid-column: 2;
+            grid-row: 1;
+        }
+        
+        .backward-btn {
+            grid-column: 2;
+            grid-row: 3;
+        }
+        
+        .left-btn {
+            grid-column: 1;
+            grid-row: 2;
+        }
+        
+        .right-btn {
+            grid-column: 3;
+            grid-row: 2;
+        }
+        
+        .stop-btn {
+            grid-column: 2;
+            grid-row: 2;
+            background: var(--danger);
+            color: white;
+            border: none;
+        }
+        
+        .special-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .special-btn {
+            padding: 12px 20px;
+            border-radius: 12px;
+            background: var(--light-bg);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .special-btn:hover {
+            background: rgba(0, 113, 227, 0.1);
+            border-color: var(--primary);
+        }
+        
+        /* 设备管理 */
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .device-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        
+        .device-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .device-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .device-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: rgba(0, 113, 227, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .device-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .device-info p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        .device-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: rgba(52, 199, 89, 0.1);
+            width: fit-content;
+            margin-bottom: 10px;
+        }
+        
+        .status-online {
+            color: var(--success);
+        }
+        
+        .status-offline {
+            color: var(--danger);
+            background: rgba(255, 59, 48, 0.1);
+        }
+        
+        .device-details {
+            margin: 10px 0;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        
+        .device-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+        
+        .device-actions .btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 14px;
+        }
+        
+        /* 登录页面 */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .login-logo h1 {
+            font-size: 28px;
+            color: var(--text-dark);
+        }
+        
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .login-form input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        
+        .login-btn:hover {
+            background: var(--primary-dark);
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--text-light);
+        }
+        
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .role-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            background: var(--light-bg);
+            border: 1px solid var(--border);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .role-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* 状态指示器 */
+        .status-indicator {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .status-item {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .status-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+        
+        .status-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--light-bg);
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .cpu-progress {
+            background: linear-gradient(90deg, #34c759, #ff9500);
+            width: 45%;
+        }
+        
+        .mem-progress {
+            background: linear-gradient(90deg, #34c759, #ff9500);
+            width: 38%;
+        }
+        
+        .battery-progress {
+            background: linear-gradient(90deg, #ff3b30, #ff9500, #34c759);
+            width: 78%;
+        }
+        
+        /* 角色定义样式 */
+        .role-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--role);
+        }
+        
+        .role-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .role-title i {
+            color: var(--role);
+            font-size: 20px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 15px;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .nav-links {
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 10px 0;
+            }
+            
+            .nav-item span {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .module-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .control-grid {
+                max-width: 250px;
+            }
+            
+            .control-btn {
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录页面 -->
+    <div class="login-container" id="loginPage">
+        <div class="login-card">
+            <div class="login-logo">
+                <i class="fas fa-robot"></i>
+                <h1>宇树G1 EDU机器人</h1>
+            </div>
+            <form class="login-form">
+                <div class="form-group">
+                    <label for="username">账号</label>
+                    <input type="text" id="username" placeholder="请输入账号">
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" placeholder="请输入密码">
+                </div>
+                
+                <div class="form-group">
+                    <label>选择登录身份</label>
+                    <div class="role-selector">
+                        <div class="role-btn active" id="userRole" onclick="selectRole('user')">普通用户</div>
+                        <div class="role-btn" id="adminRole" onclick="selectRole('admin')">系统管理员</div>
+                    </div>
+                </div>
+                
+                <button type="button" class="login-btn" onclick="login()">登录系统</button>
+            </form>
+            <div class="login-footer">
+                <p>© 2025 宇树科技 - 智能机器人管理系统</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主系统页面 -->
+    <div class="container" id="mainSystem" style="display:none">
+        <!-- 侧边导航 -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-robot"></i> 宇树G1 EDU</h1>
+            </div>
+            <div class="nav-links" id="navLinks">
+                <!-- 导航项由JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 系统看板 -->
+            <div id="dashboard" class="section">
+                <div class="header">
+                    <h2>系统看板</h2>
+                    <div class="user-info" onclick="toggleDropdown()">
+                        <div class="user-avatar" id="userAvatar">A</div>
+                        <div>
+                            <div id="userName">管理员</div>
+                            <div id="userRoleLabel" style="font-size: 12px; color: var(--text-light);">系统管理员</div>
+                        </div>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="user-dropdown-item" onclick="switchUser('user')">
+                                <i class="fas fa-user"></i>
+                                <span>切换为普通用户</span>
+                            </div>
+                            <div class="user-dropdown-item" onclick="switchUser('admin')">
+                                <i class="fas fa-cog"></i>
+                                <span>切换为管理员</span>
+                            </div>
+                            <div class="user-dropdown-item" onclick="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>退出系统</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">设备总数</div>
+                            <div class="card-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                        </div>
+                        <div class="card-content">86</div>
+                        <div class="card-footer">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>较上月增加12台</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">在线设备</div>
+                            <div class="card-icon">
+                                <i class="fas fa-wifi"></i>
+                            </div>
+                        </div>
+                        <div class="card-content">78</div>
+                        <div class="card-footer">
+                            <i class="fas fa-check-circle"></i>
+                            <span>90.7% 正常运行</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">今日报警</div>
+                            <div class="card-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                        <div class="card-content">3</div>
+                        <div class="card-footer">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>较昨日减少2起</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">账户状态</div>
+                            <div class="card-icon">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                        </div>
+                        <div class="card-content">23天</div>
+                        <div class="card-footer">
+                            <i class="fas fa-info-circle"></i>
+                            <span>剩余使用时间</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 工控机状态监控面板 -->
+                <div class="module-section">
+                    <h2 class="section-title"><i class="fas fa-desktop"></i> 工控机状态监控</h2>
+                    <div class="status-indicator">
+                        <div class="status-item">
+                            <div class="status-title">
+                                <i class="fas fa-microchip"></i>
+                                <span>CPU状态</span>
+                            </div>
+                            <div class="status-value">45%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill cpu-progress"></div>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 13px; color: var(--text-light);">
+                                <i class="fas fa-thermometer-half"></i> 温度: 56°C
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-title">
+                                <i class="fas fa-memory"></i>
+                                <span>内存使用</span>
+                            </div>
+                            <div class="status-value">38%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill mem-progress"></div>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 13px; color: var(--text-light);">
+                                <i class="fas fa-database"></i> 已用: 3.2GB / 8GB
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-title">
+                                <i class="fas fa-battery-three-quarters"></i>
+                                <span>电池状态</span>
+                            </div>
+                            <div class="status-value">78%</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill battery-progress"></div>
+                            </div>
+                            <div style="margin-top: 8px; font-size: 13px; color: var(--text-light);">
+                                <i class="fas fa-clock"></i> 预计剩余: 4小时22分
+                            </div>
+                        </div>
+                        
+                        <div class="status-item">
+                            <div class="status-title">
+                                <i class="fas fa-network-wired"></i>
+                                <span>网络状态</span>
+                            </div>
+                            <div class="status-value">5G</div>
+                            <div style="margin-top: 8px; font-size: 14px; color: var(--text-light);">
+                                <div><i class="fas fa-wifi"></i> 信号强度: 优秀</div>
+                                <div><i class="fas fa-tachometer-alt"></i> 网速: 86 Mbps</div>
+                                <div><i class="fas fa-map-marker-alt"></i> 位置: 北京海淀实验小学</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="module-section">
+                    <h2 class="section-title"><i class="fas fa-tasks"></i> 快捷操作</h2>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-plus"></i> 添加新设备
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-sync-alt"></i> 批量部署
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-file-export"></i> 导出数据
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 教育培训模块 -->
+            <div id="education" class="section" style="display:none">
+                <div class="header">
+                    <h2><i class="fas fa-chalkboard-teacher"></i> 教育培训</h2>
+                    <div class="user-info">
+                        <div class="user-avatar">T</div>
+                        <div>张老师</div>
+                    </div>
+                </div>
+
+                <div class="module-cards">
+                    <div class="module-card">
+                        <div class="module-card-header education-header">
+                            <i class="fas fa-file-powerpoint"></i>
+                            <div class="module-card-title">课件管理</div>
+                        </div>
+                        <div class="module-card-body">
+                            <div class="form-group">
+                                <label>上传教学课件</label>
+                                <div class="upload-area">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>点击或拖放PPT/PDF/图片文件到此处</p>
+                                    <p style="font-size: 14px; color: var(--text-light); margin-top: 5px;">支持PPTX, PDF, JPG, PNG格式</p>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>场景提示词设置</label>
+                                <textarea class="form-control" rows="3" placeholder="例如：你是一位小学语文老师，正在给三年级的学生讲解古诗《静夜思》..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>大屏同步设置</label>
+                                <select class="form-control">
+                                    <option>自动同步到大屏</option>
+                                    <option>手动控制同步</option>
+                                    <option>仅机器人显示</option>
+                                </select>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-education">
+                                    <i class="fas fa-play"></i> 开始讲课
+                                </button>
+                                <button class="btn btn-secondary">
+                                    <i class="fas fa-cog"></i> 高级设置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="module-card">
+                        <div class="module-card-header education-header">
+                            <i class="fas fa-microphone-alt"></i>
+                            <div class="module-card-title">AI语音设置</div>
+                        </div>
+                        <div class="module-card-body">
+                            <div class="form-group">
+                                <label>选择AI大模型平台</label>
+                                <select class="form-control">
+                                    <option>讯飞星火</option>
+                                    <option>通义千问</option>
+                                    <option>文心一言</option>
+                                    <option>豆包</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>选择科目</label>
+                                <select class="form-control">
+                                    <option>语文</option>
+                                    <option>英语</option>
+                                    <option>数学</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>选择音色</label>
+                                <select class="form-control">
+                                    <option>男声 - 沉稳教师</option>
+                                    <option>女声 - 亲切教师</option>
+                                    <option>男声 - 活泼青年</option>
+                                    <option>女声 - 甜美助手</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>机器人动作协同</label>
+                                <select class="form-control">
+                                    <option>标准教学动作</option>
+                                    <option>生动讲解动作</option>
+                                    <option>互动问答动作</option>
+                                    <option>自定义动作...</option>
+                                </select>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-education">
+                                    <i class="fas fa-volume-up"></i> 测试语音
+                                </button>
+                                <button class="btn btn-education">
+                                    <i class="fas fa-bolt"></i> 一键部署
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="module-card">
+                        <div class="module-card-header education-header">
+                            <i class="fas fa-hand-paper"></i>
+                            <div class="module-card-title">课堂互动设置</div>
+                        </div>
+                        <div class="module-card-body">
+                            <div class="form-group">
+                                <label>举手识别功能</label>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>开启举手识别</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>互动问答模式</label>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>开启自动问答</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>导航避障设置</label>
+                                <select class="form-control">
+                                    <option>课堂行走模式</option>
+                                    <option>讲台固定模式</option>
+                                    <option>学生互动模式</option>
+                                </select>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-education">
+                                    <i class="fas fa-child"></i> 模拟学生提问
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 自主导览模块 -->
+            <div id="tour" class="section" style="display:none">
+                <div class="header">
+                    <h2><i class="fas fa-map-marked-alt"></i> 自主导览</h2>
+                    <div class="user-info">
+                        <div class="user-avatar">G</div>
+                        <div>景区管理员</div>
+                    </div>
+                </div>
+
+                <div class="module-cards">
+                    <div class="module-card">
+                        <div class="module-card-header tour-header">
+                            <i class="fas fa-cogs"></i>
+                            <div class="module-card-title">导览基础设置</div>
+                        </div>
+                        <div class="module-card-body">
+                            <div class="form-group">
+                                <label>选择导览场景</label>
+                                <select class="form-control">
+                                    <option>景区</option>
+                                    <option>博物馆</option>
+                                    <option>城管局</option>
+                                    <option>政务大厅</option>
+                                    <option>企业展厅</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>选择AI大模型平台</label>
+                                <select class="form-control">
+                                    <option>讯飞星火</option>
+                                    <option>通义千问</option>
+                                    <option>文心一言</option>
+                                    <option>豆包</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>选择音色</label>
+                                <select class="form-control">
+                                    <option>男声 - 专业导游</option>
+                                    <option>女声 - 亲切讲解</option>
+                                    <option>男声 - 沉稳播报</option>
+                                    <option>女声 - 甜美助手</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>场景提示词设置</label>
+                                <textarea class="form-control" rows="3" placeholder="输入导览场景的特定提示词..."></textarea>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-tour">
+                                    <i class="fas fa-save"></i> 保存配置
+                                </button>
+                                <button class="btn btn-tour">
+                                    <i class="fas fa-bolt"></i> 一键部署
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="module-card">
+                        <div class="module-card-header tour-header">
+                            <i class="fas fa-camera"></i>
+                            <div class="module-card-title">视觉识别设置</div>
+                        </div>
+                        <div class="module-card-body">
+                            <div class="form-group">
+                                <label>双目摄像头功能</label>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>开启物品识别</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>选择识别数据集</label>
+                                <select class="form-control">
+                                    <option>通用物体识别</option>
+                                    <option>男女性别识别</option>
+                                    <option>博物馆展品识别</option>
+                                    <option>道路垃圾识别</option>
+                                    <option>自定义数据集</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>物品识别触发动作</label>
+                                <select class="form-control">
+                                    <option>移动到物体面前讲解</option>
+                                    <option>原地讲解</option>
+                                    <option>仅语音提示</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>自动跟随模式</label>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>开启游客跟随</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>城管局巡检设置</label>
+                                <select class="form-control">
+                                    <option>标准巡检模式</option>
+                                    <option>重点区域巡检</option>
+                                    <option>自定义巡检路径</option>
+                                </select>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-tour">
+                                    <i class="fas fa-eye"></i> 测试识别功能
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="module-card">
+                        <div class="module-card-header tour-header">
+                            <i class="fas fa-map-signs"></i>
+                            <div class="module-card-title">导航与安全设置</div>
+                        </div>
+                        <div class="module-card-body">
+                            <div class="form-group">
+                                <label>SLAM导航模式</label>
+                                <select class="form-control">
+                                    <option>动态避障模式</option>
+                                    <option>自动导航模式</option>
+                                    <option>路径规划模式</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>紧急报警功能</label>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                    <span>开启110报警</span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>报警设置</label>
+                                <select class="form-control">
+                                    <option>自动发送位置并报警</option>
+                                    <option>人工确认后报警</option>
+                                    <option>仅通知景区办公室</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>机器人移动速度</label>
+                                <input type="range" class="form-control" min="1" max="10" value="5">
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-tour">
+                                    <i class="fas fa-play-circle"></i> 开始导览
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 角色定义卡片 -->
+                    <div class="module-card">
+                        <div class="module-card-header role-header">
+                            <i class="fas fa-user-tie"></i>
+                            <div class="module-card-title">角色定义</div>
+                        </div>
+                        <div class="module-card-body">
+                            <div class="role-card">
+                                <div class="role-title">
+                                    <i class="fas fa-building"></i>
+                                    <h3>企业展厅</h3>
+                                </div>
+                                <div class="form-group">
+                                    <label>客户识别设置</label>
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                        <div style="flex: 1; min-width: 120px;">
+                                            <div style="font-size: 13px; margin-bottom: 5px;">识别到男性客户</div>
+                                            <select class="form-control">
+                                                <option>使用女性语音</option>
+                                                <option>使用男性语音</option>
+                                            </select>
+                                        </div>
+                                        <div style="flex: 1; min-width: 120px;">
+                                            <div style="font-size: 13px; margin-bottom: 5px;">识别到女性客户</div>
+                                            <select class="form-control">
+                                                <option>使用男性语音</option>
+                                                <option>使用女性语音</option>
+                                            </select>
+                                        </div>
+                                        <div style="flex: 1; min-width: 120px;">
+                                            <div style="font-size: 13px; margin-bottom: 5px;">识别到小孩</div>
+                                            <select class="form-control">
+                                                <option>使用卡通语音</option>
+                                                <option>使用儿童语音</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>讲解内容及时长</label>
+                                    <textarea class="form-control" rows="2" placeholder="输入自定义讲解内容..."></textarea>
+                                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 13px; margin-bottom: 5px;">讲解时长(分钟)</div>
+                                            <input type="number" class="form-control" min="1" max="60" value="15">
+                                        </div>
+                                        <div style="flex: 1;">
+                                            <div style="font-size: 13px; margin-bottom: 5px;">动作协同模式</div>
+                                            <select class="form-control">
+                                                <option>标准模式</option>
+                                                <option>生动模式</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>选择预设角色</label>
+                                <select class="form-control">
+                                    <option>前台接待</option>
+                                    <option>讲解员</option>
+                                    <option>销售员</option>
+                                    <option>导游</option>
+                                    <option>自定义角色</option>
+                                </select>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-role">
+                                    <i class="fas fa-save"></i> 保存角色配置
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 机器人控制面板 -->
+            <div id="control" class="section" style="display:none">
+                <div class="header">
+                    <h2><i class="fas fa-gamepad"></i> 机器人控制面板</h2>
+                    <div class="user-info">
+                        <div class="user-avatar">U</div>
+                        <div>普通用户</div>
+                    </div>
+                </div>
+
+                <div class="robot-control-panel">
+                    <h3 style="text-align: center; margin-bottom: 20px;">机器人运动控制</h3>
+                    <div class="control-grid">
+                        <div class="control-btn forward-btn" onclick="controlRobot('forward')">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="control-btn left-btn" onclick="controlRobot('left')">
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
+                        <div class="control-btn stop-btn" onclick="controlRobot('stop')">
+                            <i class="fas fa-stop"></i>
+                        </div>
+                        <div class="control-btn right-btn" onclick="controlRobot('right')">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="control-btn backward-btn" onclick="controlRobot('backward')">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="special-controls">
+                        <div class="special-btn" onclick="controlRobot('stand')">
+                            <i class="fas fa-stand"></i>
+                            <span>站立</span>
+                        </div>
+                        <div class="special-btn" onclick="controlRobot('sit')">
+                            <i class="fas fa-chair"></i>
+                            <span>下蹲</span>
+                        </div>
+                        <div class="special-btn" onclick="controlRobot('dance')">
+                            <i class="fas fa-music"></i>
+                            <span>跳舞</span>
+                        </div>
+                        <div class="special-btn" onclick="controlRobot('home')">
+                            <i class="fas fa-home"></i>
+                            <span>回家</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="module-section">
+                    <h2 class="section-title"><i class="fas fa-cog"></i> 功能设置</h2>
+                    <div class="module-cards">
+                        <div class="module-card">
+                            <div class="module-card-header control-header">
+                                <i class="fas fa-sliders-h"></i>
+                                <div class="module-card-title">控制参数设置</div>
+                            </div>
+                            <div class="module-card-body">
+                                <div class="form-group">
+                                    <label>移动速度</label>
+                                    <input type="range" class="form-control" min="1" max="10" value="5">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>转向灵敏度</label>
+                                    <input type="range" class="form-control" min="1" max="10" value="7">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>动作幅度</label>
+                                    <input type="range" class="form-control" min="1" max="10" value="6">
+                                </div>
+                                
+                                <div class="action-buttons">
+                                    <button class="btn btn-control">
+                                        <i class="fas fa-save"></i> 保存设置
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 设备管理 -->
+            <div id="devices" class="section" style="display:none">
+                <div class="header">
+                    <h2><i class="fas fa-server"></i> 设备管理</h2>
+                    <div class="user-info">
+                        <div class="user-avatar">O</div>
+                        <div>运维人员</div>
+                    </div>
+                </div>
+
+                <div class="action-buttons" style="margin-bottom: 20px;">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-plus"></i> 添加设备
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-download"></i> 批量导入
+                    </button>
+                    <button class="btn btn-secondary">
+                        <i class="fas fa-sync-alt"></i> 批量部署
+                    </button>
+                </div>
+
+                <div class="device-grid">
+                    <div class="device-card">
+                        <div class="device-header">
+                            <div class="device-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="device-info">
+                                <h3>G1-EDU-001</h3>
+                                <p>北京海淀实验小学</p>
+                            </div>
+                        </div>
+                        <div class="device-status status-online">
+                            <i class="fas fa-circle"></i>
+                            <span>在线 - 教学中</span>
+                        </div>
+                        <div class="device-details">
+                            <div>IP: 192.168.1.101</div>
+                            <div>最后活动: 2025-06-25 10:15</div>
+                            <div>CPU: 42% | 内存: 56%</div>
+                            <div>电池: 85% | 温度: 48°C</div>
+                        </div>
+                        <div class="device-actions">
+                            <button class="btn btn-secondary">详情</button>
+                            <button class="btn btn-secondary">设置</button>
+                            <button class="btn btn-primary">控制</button>
+                        </div>
+                    </div>
+                    
+                    <div class="device-card">
+                        <div class="device-header">
+                            <div class="device-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="device-info">
+                                <h3>G1-EDU-002</h3>
+                                <p>上海东方小学</p>
+                            </div>
+                        </div>
+                        <div class="device-status status-online">
+                            <i class="fas fa-circle"></i>
+                            <span>在线 - 待机中</span>
+                        </div>
+                        <div class="device-details">
+                            <div>IP: 192.168.1.102</div>
+                            <div>最后活动: 2025-06-25 09:45</div>
+                            <div>CPU: 28% | 内存: 42%</div>
+                            <div>电池: 92% | 温度: 41°C</div>
+                        </div>
+                        <div class="device-actions">
+                            <button class="btn btn-secondary">详情</button>
+                            <button class="btn btn-secondary">设置</button>
+                            <button class="btn btn-primary">控制</button>
+                        </div>
+                    </div>
+                    
+                    <div class="device-card">
+                        <div class="device-header">
+                            <div class="device-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="device-info">
+                                <h3>G1-TOUR-001</h3>
+                                <p>西湖风景区</p>
+                            </div>
+                        </div>
+                        <div class="device-status status-online">
+                            <i class="fas fa-circle"></i>
+                            <span>在线 - 导游中</span>
+                        </div>
+                        <div class="device-details">
+                            <div>IP: 192.168.1.201</div>
+                            <div>最后活动: 2025-06-25 10:22</div>
+                            <div>CPU: 65% | 内存: 72%</div>
+                            <div>电池: 45% | 温度: 52°C</div>
+                        </div>
+                        <div class="device-actions">
+                            <button class="btn btn-secondary">详情</button>
+                            <button class="btn btn-secondary">设置</button>
+                            <button class="btn btn-primary">控制</button>
+                        </div>
+                    </div>
+                    
+                    <div class="device-card">
+                        <div class="device-header">
+                            <div class="device-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="device-info">
+                                <h3>G1-EDU-005</h3>
+                                <p>广州实验中学</p>
+                            </div>
+                        </div>
+                        <div class="device-status status-offline">
+                            <i class="fas fa-circle"></i>
+                            <span>离线 - 超过24小时</span>
+                        </div>
+                        <div class="device-details">
+                            <div>IP: 192.168.1.105</div>
+                            <div>最后活动: 2025-06-24 08:30</div>
+                            <div>CPU: 0% | 内存: 0%</div>
+                            <div>电池: 0% | 温度: 未知</div>
+                        </div>
+                        <div class="device-actions">
+                            <button class="btn btn-secondary">详情</button>
+                            <button class="btn btn-secondary">重启</button>
+                            <button class="btn btn-primary">诊断</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 当前用户角色
+        let currentRole = 'admin'; // 默认管理员
+        
+        // 导航配置
+        const adminNav = [
+            {icon: 'fas fa-chart-line', text: '系统看板', section: 'dashboard'},
+            {icon: 'fas fa-chalkboard-teacher', text: '教育培训', section: 'education'},
+            {icon: 'fas fa-map-marked-alt', text: '自主导览', section: 'tour'},
+            {icon: 'fas fa-server', text: '设备管理', section: 'devices'},
+            {icon: 'fas fa-users-cog', text: '账号管理', section: 'accounts'},
+            {icon: 'fas fa-cog', text: '系统设置', section: 'settings'},
+            {icon: 'fas fa-sign-out-alt', text: '退出系统', action: 'logout'}
+        ];
+        
+        const userNav = [
+            {icon: 'fas fa-chalkboard-teacher', text: '教育培训', section: 'education'},
+            {icon: 'fas fa-map-marked-alt', text: '自主导览', section: 'tour'},
+            {icon: 'fas fa-gamepad', text: '机器人控制', section: 'control'},
+            {icon: 'fas fa-sign-out-alt', text: '退出系统', action: 'logout'}
+        ];
+        
+        // 初始化导航
+        function initNavigation() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.innerHTML = '';
+            
+            const navConfig = currentRole === 'admin' ? adminNav : userNav;
+            
+            navConfig.forEach(item => {
+                const navItem = document.createElement('a');
+                navItem.className = 'nav-item';
+                navItem.innerHTML = `
+                    <i class="${item.icon}"></i>
+                    <span>${item.text}</span>
+                `;
+                
+                if (item.section) {
+                    navItem.onclick = () => showSection(item.section);
+                } else if (item.action === 'logout') {
+                    navItem.onclick = logout;
+                }
+                
+                navLinks.appendChild(navItem);
+            });
+            
+            // 默认激活第一个
+            if (navLinks.firstChild) {
+                navLinks.firstChild.classList.add('active');
+                const defaultSection = navConfig[0].section;
+                if (defaultSection) {
+                    showSection(defaultSection);
+                }
+            }
+        }
+        
+        // 选择角色
+        function selectRole(role) {
+            document.getElementById('userRole').classList.toggle('active', role === 'user');
+            document.getElementById('adminRole').classList.toggle('active', role === 'admin');
+            currentRole = role;
+        }
+        
+        // 登录功能
+        function login() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('mainSystem').style.display = 'flex';
+            
+            // 更新用户信息
+            const username = document.getElementById('username').value || '用户';
+            document.getElementById('userName').textContent = username.substring(0, 5);
+            document.getElementById('userAvatar').textContent = username.charAt(0).toUpperCase();
+            document.getElementById('userRoleLabel').textContent = 
+                currentRole === 'admin' ? '系统管理员' : '普通用户';
+            
+            // 初始化导航
+            initNavigation();
+        }
+        
+        // 显示功能模块
+        function showSection(sectionId) {
+            // 隐藏所有模块
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // 显示选中的模块
+            document.getElementById(sectionId).style.display = 'block';
+            
+            // 更新导航激活状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // 找到当前点击的导航项并激活
+            event.currentTarget.classList.add('active');
+        }
+        
+        // 切换用户角色
+        function switchUser(role) {
+            currentRole = role;
+            document.getElementById('userRoleLabel').textContent = 
+                role === 'admin' ? '系统管理员' : '普通用户';
+            initNavigation();
+            toggleDropdown();
+        }
+        
+        // 切换用户下拉菜单
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // 退出功能
+        function logout() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('mainSystem').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            currentRole = 'admin';
+            selectRole('admin');
+        }
+        
+        // 机器人控制
+        function controlRobot(action) {
+            const actions = {
+                'forward': '前进',
+                'backward': '后退',
+                'left': '左转',
+                'right': '右转',
+                'stop': '停止',
+                'stand': '站立',
+                'sit': '下蹲',
+                'dance': '跳舞',
+                'home': '返回充电'
+            };
+            
+            alert(`机器人执行: ${actions[action]}`);
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.user-info')) {
+                    document.getElementById('userDropdown').style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
